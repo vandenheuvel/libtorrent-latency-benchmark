@@ -12,7 +12,7 @@ ses.listen_on(6881, 6891)
 e = lt.bdecode(torrent.read())
 info = lt.torrent_info(e)
 
-params = { 'save_path': '.', 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
+params = { 'save_path': '../Downloads', 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
 h = ses.add_torrent(params)
 
 s = h.status()

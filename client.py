@@ -14,6 +14,7 @@ info = lt.torrent_info(e)
 
 params = { 'save_path': '../Downloads', 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
 h = ses.add_torrent(params)
+h = h.connect_peer(('192.168.1.100', 6881), 0x01)
 
 s = h.status()
 while (not s.is_seeding):

@@ -52,7 +52,7 @@ for index, latency in enumerate(latencies):
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
     os.system('rm ' + downloadFolder + '/torrentTest1GB')
 
-
-plt.plot(speeds)
+npSpeeds = numpy.array(speeds)
+plt.plot(npSpeeds.transpose())
 plt.ylabel('Download speed in kb/s')
 plt.savefig(figureName)

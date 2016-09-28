@@ -2,6 +2,7 @@
 # Arvid Norberg is listed as the original author of the article.
 
 import os
+import sys
 import time
 import libtorrent as lt
 import matplotlib.pyplot as plt
@@ -13,17 +14,20 @@ torrentFolder = 'torrents'
 torrentName = 'test.torrent'
 figureName = 'figure'
 
-networkDevice = 'enp0s3'
+networkDevice = 'enp0s8'
 
 measureEvery = .1
-totalTime = 60
+totalTime = 10
 
-torrent = open(torrentFolder + "/" + torrentName, 'rb')
-iterations = totalTime / measureEvery
+iterations = round(totalTime / measureEvery)
 speeds = [[0 for x in range(iterations)] for y in latencies]
 
+os.system('rm ' + downloadFolder + '/torrentTest1GB')
+os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
 for index, latency in enumerate(latencies):
-    os.system('sudo tc qdisc add dev ' + networkDevice + 'root netem delay ' + latency + 'ms')
+    torrent = open(torrentFolder + "/" + torrentName, 'rb')
+    print('\nNow testing with latency', latency, '...')
+    os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
 
     ses = lt.session()
     ses.listen_on(6881, 6891)
@@ -35,8 +39,8 @@ for index, latency in enumerate(latencies):
     h = ses.add_torrent(params)
     h.connect_peer(('192.168.1.100', 6881), 0x01)
 
-    s = h.status()
     for i in range(iterations):
+        sys.stdout.write('\r%.2f%%' % (100 * i / iterations))
         s = h.status()
 
         state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
@@ -45,8 +49,8 @@ for index, latency in enumerate(latencies):
         if s.is_seeding:
             break
 
-    os.system('sudo tc qdisc del dev ' + networkDevice + 'root netem')
-    os.system('rm' + downloadFolder + '/torrentTest1GB')
+    os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
+    os.system('rm ' + downloadFolder + '/torrentTest1GB')
 
 
 plt.plot(speeds)

@@ -1,26 +1,54 @@
 # Retrieved on September 23st, 2016 from http://libtorrent.org/python_binding.html
 # Arvid Norberg is listed as the original author of the article.
 
-import libtorrent as lt
+import os
 import time
+import libtorrent as lt
+import matplotlib.pyplot as plt
 
-torrent = open("test.torrent", 'rb')
+latencies = [0, 20, 50, 100, 150, 200, 500]
 
-ses = lt.session()
-ses.listen_on(6881, 6891)
+downloadFolder = 'downloads'
+torrentFolder = 'torrents'
+torrentName = 'test.torrent'
+figureName = 'figure'
 
-e = lt.bdecode(torrent.read())
-info = lt.torrent_info(e)
+networkDevice = 'enp0s3'
 
-params = { 'save_path': '../Downloads', 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
-h = ses.add_torrent(params)
-h.connect_peer(('192.168.1.100', 6881), 0x01)
+measureEvery = .1
+totalTime = 60
 
-s = h.status()
-while (not s.is_seeding):
+torrent = open(torrentFolder + "/" + torrentName, 'rb')
+iterations = totalTime / measureEvery
+speeds = [[0 for x in range(iterations)] for y in latencies]
+
+for index, latency in enumerate(latencies):
+    os.system('sudo tc qdisc add dev ' + networkDevice + 'root netem delay ' + latency + 'ms')
+
+    ses = lt.session()
+    ses.listen_on(6881, 6891)
+
+    e = lt.bdecode(torrent.read())
+    info = lt.torrent_info(e)
+
+    params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
+    h = ses.add_torrent(params)
+    h.connect_peer(('192.168.1.100', 6881), 0x01)
+
     s = h.status()
+    for i in range(iterations):
+        s = h.status()
 
-    state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
-    print('%.2f%% complete (down: %.1f kb/s up: %.1f kB/s peers: %d) %s' %  (s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, s.num_peers, state_str[s.state]))
+        state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
+        speeds[index][i]
+        time.sleep(measureEvery)
+        if s.is_seeding:
+            break
 
-    time.sleep(1)
+    os.system('sudo tc qdisc del dev ' + networkDevice + 'root netem')
+    os.system('rm' + downloadFolder + '/torrentTest1GB')
+
+
+plt.plot(speeds)
+plt.ylabel('Download speed in kb/s')
+plt.savefig(figureName)

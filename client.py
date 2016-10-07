@@ -17,7 +17,7 @@ figureName = 'figure'
 
 networkDevice = 'enp0s8'
 
-measureEvery = .1
+measureEvery = .01
 totalTime = 30
 
 iterations = round(totalTime / measureEvery)
@@ -53,8 +53,8 @@ for index, latency in enumerate(latencies):
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
     os.system('rm ' + downloadFolder + '/torrentTest1GB')
 
-npSpeeds = numpy.array(speeds)
+npSpeeds = numpy.array(speeds).transpose()
 numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
-plt.plot(npSpeeds.transpose())
+plt.plot(npSpeeds)
 plt.ylabel('Download speed in kB/s')
 plt.savefig(figureName)

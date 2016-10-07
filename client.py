@@ -45,7 +45,7 @@ for index, latency in enumerate(latencies):
         s = h.status()
 
         state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
-        speeds[index][i] = s.download_rate
+        speeds[index][i] = s.download_rate / 1000
         time.sleep(measureEvery)
         if s.is_seeding:
             break
@@ -56,5 +56,5 @@ for index, latency in enumerate(latencies):
 npSpeeds = numpy.array(speeds)
 numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
 plt.plot(npSpeeds.transpose())
-plt.ylabel('Download speed in kb/s')
+plt.ylabel('Download speed in kB/s')
 plt.savefig(figureName)

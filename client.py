@@ -4,6 +4,7 @@
 import os
 import sys
 import time
+import numpy
 import libtorrent as lt
 import matplotlib.pyplot as plt
 

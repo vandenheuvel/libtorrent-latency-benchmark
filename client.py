@@ -7,7 +7,7 @@ import time
 import libtorrent as lt
 import matplotlib.pyplot as plt
 
-latencies = [0, 20, 50, 100, 150, 200, 500]
+latencies = [50 * x or x in range(10)]
 
 downloadFolder = 'downloads'
 torrentFolder = 'torrents'
@@ -17,7 +17,7 @@ figureName = 'figure'
 networkDevice = 'enp0s8'
 
 measureEvery = .1
-totalTime = 10
+totalTime = 30
 
 iterations = round(totalTime / measureEvery)
 speeds = [[0 for x in range(iterations)] for y in latencies]
@@ -44,7 +44,7 @@ for index, latency in enumerate(latencies):
         s = h.status()
 
         state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
-        speeds[index][i]
+        speeds[index][i] = s.download_rate
         time.sleep(measureEvery)
         if s.is_seeding:
             break

@@ -54,6 +54,7 @@ for index, latency in enumerate(latencies):
     os.system('rm ' + downloadFolder + '/torrentTest1GB')
 
 npSpeeds = numpy.array(speeds)
+numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
 plt.plot(npSpeeds.transpose())
 plt.ylabel('Download speed in kb/s')
 plt.savefig(figureName)

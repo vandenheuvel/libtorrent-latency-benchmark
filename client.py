@@ -7,7 +7,7 @@ import time
 import libtorrent as lt
 import matplotlib.pyplot as plt
 
-latencies = [50 * x or x in range(10)]
+latencies = [50 * x for x in range(10)]
 
 downloadFolder = 'downloads'
 torrentFolder = 'torrents'

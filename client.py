@@ -4,8 +4,9 @@
 import os
 import sys
 import time
+import numpy
 import libtorrent as lt
-import csv
+import matplotlib.pyplot as plt
 
 latencies = [50 * x for x in range(10)]
 
@@ -52,7 +53,8 @@ for index, latency in enumerate(latencies):
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
     os.system('rm ' + downloadFolder + '/torrentTest1GB')
 
-with open("results.csv", "wb") as f:
-    writer = csv.writer(f)
-    writer.writeRows(speeds)
-
+npSpeeds = numpy.array(speeds).transpose()
+numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
+plt.plot(npSpeeds)
+plt.ylabel('Download speed in kB/s')
+plt.savefig(figureName)

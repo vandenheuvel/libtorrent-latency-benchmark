@@ -20,9 +20,9 @@ def destroyExisting(containerNames):
                 exit(1)
 
 # Create containers with given names contained within containerNames.
-def createTemporary(toCreate):
+def createContainers(containerNames, containerOptions):
     createdContainers = []
-    for containerName, containerOptions in toCreate:
+    for containerName in containerNames:
         print("Creating container \"", containerName, "\"...", sep="")
         container = lxc.Container(containerName)
         if container.defined:
@@ -36,10 +36,10 @@ def createTemporary(toCreate):
     return createdContainers
 
 # Load configs into the containers.
-def loadConfig(toLoad):
-    for (container, directory) in toLoad:
-        print("Configuring ", container, " with config file ", directory, " ...")
-        if not container.load_config(directory):
+def loadConfig(containers, configDirectory):
+    for container in containers:
+        print("Configuring ", container, " with config file ", configDirectory, " ...")
+        if not container.load_config(configDirectory):
             print("The config file cannot be loaded.")
         container.append_config_item("mount.entry", os.getcwd() + "bind mnt/data none bind,create=dir 0 0")
 

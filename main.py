@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import bridgeControl as brctl
 import lxcControl as lxcctl
 import config
 import os
@@ -13,24 +12,30 @@ if not os.geteuid() == 0:
     sys.exit("Run as root.")
 
 # Check whether enough arguments are given.
-if not len(sys.argv) == 3:
-    sys.exit("Give two unused names for the containers.")
+if not len(sys.argv) == 4:
+    sys.exit("Give three arguments: bridgeName, amount of clients, amount of seeders.")
 
-# Create a fresh bridge.
-brctl.addbr("br0");
+print("Creating names for " + sys.argv[2] + " client and for " + sys.argv[3] + " seeder containers...")
+clientNames = ["ClientContainer" + str(x + 1) for x in range(int(sys.argv[2]))]
+seederNames = ["SeederContainer" + str(x + 1) for x in range(int(sys.argv[3]))]
 
 # Create fresh containers and start them.
-lxcctl.destroyExisting(sys.argv[1:3])
-(server, client) = lxcctl.createTemporary([(sys.argv[1], config.serverOptions), (sys.argv[2], config.clientOptions)])
-if not lxcctl.startContainers([server, client]):
-    print("Failed to start a container, exiting.", file=sys.stderr)
-    exit(1)
+print("Deleting existing containers by the same names as created, if existing...")
+lxcctl.destroyExisting(clientNames)
+lxcctl.destroyExisting(seederNames)
 
-lxcctl.loadConfig([(client, config.clientConfDir), (server, config.hostConfDir)])
-# Install scripts to both the server and the client container.
-lxcctl.installScripts([(server, config.bindDir), (client, config.bindDir)])
+print("Create new client and seeder containers...")
+clientContainers = lxcctl.createContainers(clientNames, config.clientOptions)
+seederContainers = lxcctl.createContainers(seederNames, config.serverOptions)
 
-# Finish the test, removing both the containers and the bridge.
-lxcctl.stopContainers([server, client])
-lxcctl.destroyExisting(sys.argv[1:3])
-brctl.delbr("br0");
+print("Adding config to created containers...")
+lxcctl.loadConfig(clientContainers, config.clientConfDir)
+lxcctl.loadConfig(seederContainers, config.hostConfDir)
+
+print("Stopping the currently running containers...")
+lxcctl.stopContainers(clientContainers)
+lxcctl.stopContainers(seederContainers)
+
+print("Destroying the existing containers...")
+lxcctl.destroyExisting(clientNames)
+lxcctl.destroyExisting(seederNames)

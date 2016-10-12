@@ -2,7 +2,7 @@ import lxc
 import sys
 import config
 import os
-
+    
 
 # Destroy containers with given names contained within containerNames.
 def destroyExisting(containerNames):
@@ -35,6 +35,14 @@ def createTemporary(toCreate):
         createdContainers.append(container)
     return createdContainers
 
+# Load configs into the containers.
+def loadConfig(toLoad):
+    for (container, directory) in toLoad:
+        print("Configuring ", container, " with config file ", directory, " ...")
+        container.append() 
+        if not container.load_config(directory):
+            print("The config file cannot be loaded.")
+
 # Start all the containers in the list containers.
 def startContainers(containers):
     success = True
@@ -47,7 +55,7 @@ def startContainers(containers):
 
 # Bind the directory to the given containers within toBind.
 def installScripts(toBind):
-    for (container, directory) in toBind:
+    for (container, directory) in toBind:       
         print("Binding ", os.getcwd() + directory, " to ", container, "...", sep="")
 
 # Stop all containers which are contained within the list containers.

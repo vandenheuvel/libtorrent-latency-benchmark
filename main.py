@@ -17,7 +17,6 @@ if not len(sys.argv) == 3:
     sys.exit("Give two unused names for the containers.")
 
 # Create a fresh bridge.
-brctl.delbr("br0");
 brctl.addbr("br0");
 
 # Create fresh containers and start them.
@@ -27,6 +26,7 @@ if not lxcctl.startContainers([server, client]):
     print("Failed to start a container, exiting.", file=sys.stderr)
     exit(1)
 
+lxcctl.loadConfig([(client, config.clientConfDir), (server, config.hostConfDir)])
 # Install scripts to both the server and the client container.
 lxcctl.installScripts([(server, config.bindDir), (client, config.bindDir)])
 

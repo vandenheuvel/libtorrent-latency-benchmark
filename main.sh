@@ -1,6 +1,6 @@
 #!/bin/bash
 bridgeName="br0"
-pythonName="main.py"
+mainScript="main.py"
 numLeechers=1
 numSeeders=4
 
@@ -23,8 +23,8 @@ echo "Creating temporary folder to conduct tests in..."
 echo "Creating random file and torrent for the seeders to seed..."
 
 
-echo "Running Python script $pythonName with parameters $bridgeName $numLeechers $numSeeders."
-python3 $pythonName $bridgeName $numLeechers $numSeeders
+echo "Running Python script $mainScript with parameters $bridgeName $numLeechers $numSeeders."
+python3 $mainScript $bridgeName $numLeechers $numSeeders
 
 echo "Removing bridge with name $bridgeName..."
 ifconfig $bridgeName down

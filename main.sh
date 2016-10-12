@@ -1,7 +1,7 @@
 #!/bin/bash
 bridgeName="br0"
 pythonName="main.py"
-numClients=1
+numLeechers=1
 numSeeders=4
 
 if [[ $EUID -ne 0 ]]; then
@@ -17,8 +17,14 @@ echo "Creating and setting up bridge $bridgeName..."
 brctl addbr $bridgeName
 ifconfig $bridgeName up
 
-echo "Running Python script $pythonName with parameters $bridgeName $numClients $numSeeders."
-python3 $pythonName $bridgeName $numClients $numSeeders
+echo "Creating temporary folder to conduct tests in..."
+
+
+echo "Creating random file and torrent for the seeders to seed..."
+
+
+echo "Running Python script $pythonName with parameters $bridgeName $numLeechers $numSeeders."
+python3 $pythonName $bridgeName $numLeechers $numSeeders
 
 echo "Removing bridge with name $bridgeName..."
 ifconfig $bridgeName down

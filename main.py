@@ -13,29 +13,29 @@ if not os.geteuid() == 0:
 
 # Check whether enough arguments are given.
 if not len(sys.argv) == 4:
-    sys.exit("Give three arguments: bridgeName, amount of clients, amount of seeders.")
+    sys.exit("Give three arguments: bridgeName, amount of leechers, amount of seeders.")
 
-print("Creating names for " + sys.argv[2] + " client and for " + sys.argv[3] + " seeder containers...")
-clientNames = ["ClientContainer" + str(x + 1) for x in range(int(sys.argv[2]))]
+print("Creating names for " + sys.argv[2] + " leecher and for " + sys.argv[3] + " seeder containers...")
+leecherNames = ["ClientContainer" + str(x + 1) for x in range(int(sys.argv[2]))]
 seederNames = ["SeederContainer" + str(x + 1) for x in range(int(sys.argv[3]))]
 
 # Create fresh containers and start them.
 print("Deleting existing containers by the same names as created, if existing...")
-lxcctl.destroyExisting(clientNames)
+lxcctl.destroyExisting(leecherNames)
 lxcctl.destroyExisting(seederNames)
 
-print("Create new client and seeder containers...")
-clientContainers = lxcctl.createContainers(clientNames, config.clientOptions)
-seederContainers = lxcctl.createContainers(seederNames, config.serverOptions)
+print("Create new leecher and seeder containers...")
+leecherContainers = lxcctl.createContainers(leecherNames, config.leecherOptions)
+seederContainers = lxcctl.createContainers(seederNames, config.seederOptions)
 
 print("Adding config to created containers...")
-lxcctl.loadConfig(clientContainers, config.clientConfDir)
-lxcctl.loadConfig(seederContainers, config.hostConfDir)
+lxcctl.loadConfig(leecherContainers, config.leecherConfDir)
+lxcctl.loadConfig(seederContainers, config.seederConfDir)
 
 print("Stopping the currently running containers...")
-lxcctl.stopContainers(clientContainers)
+lxcctl.stopContainers(leecherContainers)
 lxcctl.stopContainers(seederContainers)
 
 print("Destroying the existing containers...")
-lxcctl.destroyExisting(clientNames)
+lxcctl.destroyExisting(leecherNames)
 lxcctl.destroyExisting(seederNames)

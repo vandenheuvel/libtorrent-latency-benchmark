@@ -55,6 +55,3 @@ for index, latency in enumerate(latencies):
 
 npSpeeds = numpy.array(speeds).transpose()
 numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
-plt.plot(npSpeeds)
-plt.ylabel('Download speed in kB/s')
-plt.savefig(figureName)

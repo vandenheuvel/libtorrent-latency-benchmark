@@ -39,9 +39,9 @@ def createTemporary(toCreate):
 def loadConfig(toLoad):
     for (container, directory) in toLoad:
         print("Configuring ", container, " with config file ", directory, " ...")
-        container.append() 
         if not container.load_config(directory):
             print("The config file cannot be loaded.")
+        container.append_config_item("mount.entry", os.getcwd() + "bind mnt/data none bind,create=dir 0 0")
 
 # Start all the containers in the list containers.
 def startContainers(containers):

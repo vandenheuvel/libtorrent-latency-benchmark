@@ -1,6 +1,5 @@
 import lxc
 import sys
-import config
 import os
     
 

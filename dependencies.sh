@@ -1,4 +1,5 @@
 #!/bin/bash
+
 downloadPackages=("python3-libtorrent" "python3-numpy")
 
 if [[ $EUID -ne 0 ]]; then
@@ -6,9 +7,10 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+
 # For each package in downloadPackages, using the option given as the argument
 for package in "${downloadPackages[@]}"
 do
-    apt-get $1 install $package -y > /dev/null
+    apt-get $1 install $package -y
 done
 

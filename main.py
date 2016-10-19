@@ -45,6 +45,10 @@ print("Adding config to created containers...")
 lxcctl.loadConfig(leecherContainers, leecherConfDir, startIP)
 lxcctl.loadConfig(seederContainers, seederConfDir, (startIP + int(sys.argv[2])))
 
+print("Starting containers...")
+lxcctl.startContainers(leecherContainers)
+lxcctl.startContainers(seederContainers)
+
 print("Installing dependencies...")
 lxcctl.installDependencies(leecherContainers)
 lxcctl.installDependencies(seederContainers)

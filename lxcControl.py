@@ -47,7 +47,8 @@ def loadConfig(containers, configDirectory, startIndex):
         print("Configuring ", container, " with config file ", configDirectory, " ...")
         if not container.load_config(configDirectory):
             print("The config file cannot be loaded.")
-        container.append_config_item("network.ipv4", "192.168.1." + str((startIndex + index)))
+        test = container.append_config_item("lxc.network.ipv4", "192.168.1." +str((startIndex + index))  "/24")
+        print(test)
 
 # Start all the containers in the list containers.
 def startContainers(containers):
@@ -70,11 +71,23 @@ def stopContainers(containers):
     for container in containers:
         print("Shutting down", container)
         if not container.shutdown(15):
-            print("Clean shutdown failed, forcicng.", file=sys.stderr)
+            print("Clean shutdown failed, forcing.", file=sys.stderr)
             if not container.stop():
                 print("Failed to stop container.", file=sys.stderr)
                 success = False
     return success
 
+# Install all dependencies
+def installDependencies(containers):
+    for container in containers:
+        container.attach_wait(lxc.attach_run_command, ["/mnt/dependencies.sh"])
 
+# Run scripts for seeding
+def startSeeding(seederContainers):
+    for container in seederContainers:
+        container.attach(lxc.attach_run_command, ["python3", "/mnt/seeder.py"])
 
+# Run scripts for leeching
+def startTest(leecherContainers):
+    for container in leecherContainers:
+        container.attach_wait(lxc.attach_run_command, ["python3", "/mnt/leecher.py", "100", "1"]) 

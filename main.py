@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+# main.py
+
+"""
+Runs the experiment from inside the LXC.
+"""
 
 import lxcControl as lxcctl
 import os
@@ -30,7 +35,7 @@ print("Creating names for " + sys.argv[2] + " leecher and for " + sys.argv[3] + 
 leecherNames = ["ClientContainer" + str(x + 1) for x in range(int(sys.argv[2]))]
 seederNames = ["SeederContainer" + str(x + 1) for x in range(int(sys.argv[3]))]
 
-# Create fresh containers and start them.
+# Create new containers and start them.
 print("Deleting existing containers by the same names as created, if existing...")
 lxcctl.destroyExisting(leecherNames)
 lxcctl.destroyExisting(seederNames)

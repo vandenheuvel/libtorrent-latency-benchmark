@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # createPlot.py
 
-"""This script plots data in a csv into a graph with labels."""
+"""
+This script plots data in a csv into a graph with labels.
+"""
 
 import sys
 import numpy as np

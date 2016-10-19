@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # leecher.py
  
-"""This script tests the downloading speed from the given IPS of different latencies.
+"""
+This script tests the downloading speed from the given IPS of different latencies.
 This is done by netem to emulate the latency.
-The results are then saved to a .csv file"""
+The results are then saved to a .csv file
+"""
+
 import os
 import sys
 import time

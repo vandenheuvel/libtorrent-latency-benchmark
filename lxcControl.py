@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# lxcControl.py
+
+"""Provides methods to create, modify and delete containers."""
+
 import lxc
 import sys
 import os

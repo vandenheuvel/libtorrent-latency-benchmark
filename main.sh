@@ -1,51 +1,59 @@
 #!/bin/bash
-bridgeName="br0"
-mainScript="main.py"
-numLeechers=1
-numSeeders=1
-fileSize=32
-dataFile="result.csv"
-runDuration=30
-latencyIntervals=20
-tmpFolder="tmp"
+BRIDGENAME="br0"
+MAINSCRIPT="main.py"
+NUMLEECHERS=1
+NUMSEEDERS=1
+FILESIZE=32
+DATAFILE="result.csv"
+RUNDURATION=30
+LATENCYINTERVALS=20
+TMPFOLDER="tmp/"
+SEEDDIR=$TMPFOLDER"seeder/"
+LEECHDIR=$TMPFOLDER"leecher/"
+FILENAME="test.file"
+TORRENTNAME="test.torrent"
 
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root."
     exit 1
 fi
 
-echo "Removing bridge with name $bridgeName if one exists..."
-ifconfig $bridgeName down
-brctl delbr $bridgeName
+echo "Removing bridge with name $BRIDGENAME if one exists..."
+ifconfig $BRIDGENAME down
+brctl delbr $BRIDGENAME
 
-echo "Creating and setting up bridge $bridgeName..."
-brctl addbr $bridgeName
-ifconfig $bridgeName up
+echo "Creating and setting up bridge $BRIDGENAME..."
+brctl addbr $BRIDGENAME
+ifconfig $BRIDGENAME up
+
+echo "Downloading ctorrent to create our torrent file"
+apt install ctorrent
 
 echo "Creating temporary folder to conduct tests in..."
-mkdir $tmpFolder
-mkdir $tmpFolder/seeder
-mkdir $tmpFolder/leecher
+mkdir $TMPFOLDER
+mkdir $SEEDFOLDER
+mkdir $LEECHFOLDER
 
-cp seeder.py $tmpFolder/seeder
-cp leecher.py $tmpFolder/leecher
+cp seeder.py $SEEDFOLDER 
+cp leecher.py $LEECHFOLDER
 
 echo "Creating random file and torrent for the seeders to seed..."
-dd if=/dev/urandom of=tmp/seeder/random.file bs=1M count=$fileSize status=progress
-#ctorrent...
+dd if=/dev/urandom of=$SEEDDIR$FILENAME bs=1M count=$FILESIZE status=progress
+ctorrent -t -u 127.0.0.1 -s $SEEDDIR$TORRENTNAME $SEEDDIR$FILENAME
+cp $SEEDDIR$TORRENTNAME $LEECHDIR$TORRENTNAME
 
-echo "Running Python script $mainScript with parameters $bridgeName $numLeechers $numSeeders."
-python3 $mainScript $bridgeName $numLeechers $numSeeders
+echo "Running Python script $MAINSCRIPT with parameters $BRIDGENAME $NUMLEECHERS $NUMSEEDERS."
+python3 $MAINSCRIPT $BRIDGENAME $NUMLEECHERS $NUMSEEDERS
 
 echo "Copying results..."
-mv $tmpFolder/leecher/$dataFile .
+mv $LEECHFOLDER$DATAFILE .
 
 echo "Removing temporary folder..."
-rm -rf $tmpFolder
+rm -rf $TMPFOLDER
 
 echo "Showing plot..."
-python3 createPlot.py $dataFile $runDuration $latencyIntervals
+python3 createPlot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
 
-echo "Removing bridge with name $bridgeName..."
-ifconfig $bridgeName down
-brctl delbr $bridgeName
+echo "Removing bridge with name $BRIDGENAME..."
+ifconfig $BRIDGENAME down
+brctl delbr $BRIDGENAME

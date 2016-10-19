@@ -36,7 +36,7 @@ apt-get update -qq
 DEPENDENCIES=("bridge-utils" "ctorrent" "python3-numpy" "python3-matplotlib" "lxc")
 for package in "${DEPENDENCIES[@]}"
 do
-    apt-get install -qq $package -y
+    apt-get -qq install $package -y
 done
 
 echo "Removing bridge with name $BRIDGENAME regardless of whether one exists..."
@@ -67,9 +67,9 @@ cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 echo "Downloading dependencies for seeders and leechers..."
 ./dependencies.sh -d
 
-echo "\n---\n---\nRunning Python script $MAINSCRIPT with parameters $BRIDGENAME $NUMLEECHERS $NUMSEEDERS...\n\n"
+echo -e "\n---\n---\nRunning Python script $MAINSCRIPT with parameters $BRIDGENAME $NUMLEECHERS $NUMSEEDERS...\n\n"
 python3 $MAINSCRIPT $BRIDGENAME $NUMLEECHERS $NUMSEEDERS
-echo "\n\nDone running Python script $MAINSCRIPT.\n---\n---\n"
+echo -e "\n\nDone running Python script $MAINSCRIPT.\n---\n---\n"
 
 echo "Copying results..."
 mv $LEECHFOLDER$DATAFILE .

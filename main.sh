@@ -72,12 +72,12 @@ python3 $MAINSCRIPT $BRIDGENAME $NUMLEECHERS $NUMSEEDERS
 echo -e "\n\nDone running Python script $MAINSCRIPT.\n---\n---\n"
 
 echo "Copying results..."
-mv $LEECHFOLDER$DATAFILE .
+mv $LEECHFOLDER$DATAFILE $DATAFILE
 
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
-echo "Showing plot..."
+echo "Creating plot..."
 python3 createPlot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
 
 echo "Removing bridge with name $BRIDGENAME..."

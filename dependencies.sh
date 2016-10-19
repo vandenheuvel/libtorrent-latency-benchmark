@@ -9,6 +9,6 @@ fi
 # For each package in downloadPackages, using the option given as the argument
 for package in "${downloadPackages[@]}"
 do
-    apt-get $1 install $package -y
+    apt-get $1 install $package -y > /dev/null
 done
 

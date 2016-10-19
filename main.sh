@@ -32,11 +32,11 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export PATH
 
 echo "Downloading dependencies..."
-apt-get update -qq > /dev/null
+apt-get update > /dev/null
 DEPENDENCIES=("bridge-utils" "ctorrent" "python3-numpy" "python3-matplotlib" "lxc")
 for package in "${DEPENDENCIES[@]}"
 do
-    apt-get -qq install $package -y > /dev/null
+    apt-get install $package -y > /dev/null
 done
 
 echo "Removing bridge with name $BRIDGENAME regardless of whether one exists..."

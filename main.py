@@ -7,6 +7,8 @@ import sys
 import lxc
 import subprocess
 
+startIP = 100
+
 # Check for superuser privileges.
 if not os.geteuid() == 0:
     sys.exit("Run as root.")
@@ -29,8 +31,8 @@ leecherContainers = lxcctl.createContainers(leecherNames, config.leecherOptions)
 seederContainers = lxcctl.createContainers(seederNames, config.seederOptions)
 
 print("Adding config to created containers...")
-lxcctl.loadConfig(leecherContainers, config.leecherConfDir)
-lxcctl.loadConfig(seederContainers, config.seederConfDir)
+lxcctl.loadConfig(leecherContainers, config.leecherConfDir, startIP)
+lxcctl.loadConfig(seederContainers, config.seederConfDir, (startIP + int(sys.argv[2])))
 
 print("Stopping the currently running containers...")
 lxcctl.stopContainers(leecherContainers)

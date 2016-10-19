@@ -36,12 +36,12 @@ def createContainers(containerNames, containerOptions):
     return createdContainers
 
 # Load configs into the containers.
-def loadConfig(containers, configDirectory):
-    for container in containers:
+def loadConfig(containers, configDirectory, startIndex):
+    for index, container in enumerate(containers):
         print("Configuring ", container, " with config file ", configDirectory, " ...")
         if not container.load_config(configDirectory):
             print("The config file cannot be loaded.")
-        container.append_config_item("mount.entry", os.getcwd() + "bind mnt/data none bind,create=dir 0 0")
+        container.append_config_item("network.ipv4", "192.168.1." + str((startIndex + index)))
 
 # Start all the containers in the list containers.
 def startContainers(containers):

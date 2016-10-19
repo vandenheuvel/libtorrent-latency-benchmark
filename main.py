@@ -1,13 +1,22 @@
 #!/usr/bin/python3
 
 import lxcControl as lxcctl
-import config
 import os
 import sys
 import lxc
 import subprocess
 
+
 startIP = 100
+
+# Specifies some of the options used for the creation of the different LXC container types. 
+seederOptions = {"dist": "ubuntu", "release": "xenial", "arch": "amd64"} 
+leecherOptions = {"dist": "ubuntu", "release": "xenial", "arch": "amd64"} 
+ 
+# Specifies the location of the config files of the different LXC container types. 
+leecherConfDir = "./leecher.conf" 
+seederConfDir = "./seeder.conf"
+
 
 # Check for superuser privileges.
 if not os.geteuid() == 0:
@@ -27,12 +36,12 @@ lxcctl.destroyExisting(leecherNames)
 lxcctl.destroyExisting(seederNames)
 
 print("Create new leecher and seeder containers...")
-leecherContainers = lxcctl.createContainers(leecherNames, config.leecherOptions)
-seederContainers = lxcctl.createContainers(seederNames, config.seederOptions)
+leecherContainers = lxcctl.createContainers(leecherNames, leecherOptions)
+seederContainers = lxcctl.createContainers(seederNames, seederOptions)
 
 print("Adding config to created containers...")
-lxcctl.loadConfig(leecherContainers, config.leecherConfDir, startIP)
-lxcctl.loadConfig(seederContainers, config.seederConfDir, (startIP + int(sys.argv[2])))
+lxcctl.loadConfig(leecherContainers, leecherConfDir, startIP)
+lxcctl.loadConfig(seederContainers, seederConfDir, (startIP + int(sys.argv[2])))
 
 print("Stopping the currently running containers...")
 lxcctl.stopContainers(leecherContainers)

@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 
 latencies = [50 * x for x in range(10)]
 
-downloadFolder = 'downloads'
-torrentFolder = 'torrents'
+downloadFolder = 'downloads/'
+torrentFolder = 'torrents/'
 torrentName = 'test.torrent'
 figureName = 'figure'
 
@@ -23,10 +23,10 @@ totalTime = 30
 iterations = round(totalTime / measureEvery)
 speeds = [[0 for x in range(iterations)] for y in latencies]
 
-os.system('rm ' + downloadFolder + '/torrentTest1GB')
+os.system('rm ' + downloadFolder + 'torrentTest1GB')
 os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
 for index, latency in enumerate(latencies):
-    torrent = open(torrentFolder + "/" + torrentName, 'rb')
+    torrent = open(torrentFolder + torrentName, 'rb')
     print('\nNow testing with latency', latency, '...')
     os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
 
@@ -51,7 +51,7 @@ for index, latency in enumerate(latencies):
             break
 
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
-    os.system('rm ' + downloadFolder + '/torrentTest1GB')
+    os.system('rm ' + downloadFolder + 'torrentTest1GB')
 
 npSpeeds = numpy.array(speeds).transpose()
 numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")

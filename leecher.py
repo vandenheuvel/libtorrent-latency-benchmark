@@ -38,7 +38,9 @@ for index, latency in enumerate(latencies):
 
     params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
     h = ses.add_torrent(params)
-    h.connect_peer(('192.168.1.100', 6881), 0x01)
+    
+    for ipAddress in range(int(sys.argv[1]), (int(sys.argv[1]) + int(sys.argv[2]) + 1))
+        h.connect_peer(('192.168.1.' + str(ipAddress), 6881), 0x01)
 
     for i in range(iterations):
         sys.stdout.write('\r%.2f%%' % (100 * i / iterations))

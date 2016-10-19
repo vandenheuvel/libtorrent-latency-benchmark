@@ -5,11 +5,9 @@
 Runs the experiment from inside the LXC.
 """
 
-import lxcControl as lxcctl
-import os
-import sys
+import os, sys, time
 import lxc
-import subprocess
+import lxcControl as lxcctl
 
 
 startIP = 100
@@ -21,7 +19,6 @@ leecherOptions = {"dist": "ubuntu", "release": "xenial", "arch": "amd64"}
 # Specifies the location of the config files of the different LXC container types. 
 leecherConfDir = "./leecher.conf" 
 seederConfDir = "./seeder.conf"
-
 
 # Check for superuser privileges.
 if not os.geteuid() == 0:
@@ -47,6 +44,17 @@ seederContainers = lxcctl.createContainers(seederNames, seederOptions)
 print("Adding config to created containers...")
 lxcctl.loadConfig(leecherContainers, leecherConfDir, startIP)
 lxcctl.loadConfig(seederContainers, seederConfDir, (startIP + int(sys.argv[2])))
+
+print("Installing dependencies...")
+lxcctl.installDependencies(leecherContainers)
+lxcctl.installDependencies(seederContainers)
+
+print("Starting the seed containers...")
+lxcctl.startSeeding(seederContainers)
+time.sleep(10)
+
+print("Running the tests...\n---\n---\n")
+lxcctl.startTest(leecherContainers)
 
 print("Stopping the currently running containers...")
 lxcctl.stopContainers(leecherContainers)

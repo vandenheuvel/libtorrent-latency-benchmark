@@ -1,5 +1,5 @@
 #!/bin/bash
-BRIDGENAME="br0"
+BRIDGENAME="lxcbr0"
 MAINSCRIPT="main.py"
 NUMLEECHERS=1
 NUMSEEDERS=1
@@ -18,6 +18,20 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+echo "Setting DNS..."
+echo -e "nameserver 8.8.8.8\nnameserver 208.67.222.222\n" > /etc/resolv.conf
+
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+
+echo "Downloading dependencies..."
+DEPENDENCIES=("bridge-utils" "ctorrent" "python3-numpy" "python3-matplotlib" "lxc")
+
+for package in "${DEPENDENCIES[@]}"
+do
+    apt install $package -y -qq
+done
+
 echo "Removing bridge with name $BRIDGENAME if one exists..."
 ifconfig $BRIDGENAME down
 brctl delbr $BRIDGENAME
@@ -26,12 +40,9 @@ echo "Creating and setting up bridge $BRIDGENAME..."
 brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
 
-echo "Downloading ctorrent to create our torrent file"
-apt install ctorrent -y
-apt install python3-numpy -y
-apt install python3-matplotlib -y
 
 echo "Creating temporary folder to conduct tests in..."
+cd /mnt
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
 mkdir $LEECHFOLDER

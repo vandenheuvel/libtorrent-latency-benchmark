@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Give the file name, test duration and latency interval size.
 numVars = 3
 if len(sys.argv) != numVars + 1:
     print("Give me", numVars, "arguments!")

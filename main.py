@@ -37,13 +37,13 @@ print("Deleting existing containers by the same names as created, if existing...
 lxcctl.destroyExisting(leecherNames)
 lxcctl.destroyExisting(seederNames)
 
+print("Adding config to created containers...")
+lxcctl.editConfig(leecherContainers, leecherConfDir, startIP)
+lxcctl.editConfig(seederContainers, seederConfDir, (startIP + int(sys.argv[2])))
+
 print("Create new leecher and seeder containers...")
 leecherContainers = lxcctl.createContainers(leecherNames, leecherOptions)
 seederContainers = lxcctl.createContainers(seederNames, seederOptions)
-
-print("Adding config to created containers...")
-lxcctl.loadConfig(leecherContainers, leecherConfDir, startIP)
-lxcctl.loadConfig(seederContainers, seederConfDir, (startIP + int(sys.argv[2])))
 
 print("Starting containers...")
 lxcctl.startContainers(leecherContainers)

@@ -33,19 +33,17 @@ export PATH
 
 echo "Downloading dependencies..."
 apt-get update > /dev/null
-DEPENDENCIES=("bridge-utils" "ctorrent" "python3-numpy" "python3-matplotlib" "lxc")
+DEPENDENCIES=("bridge-utils" "ctorrent" "lxc" "cgroupfs-mount")
 for package in "${DEPENDENCIES[@]}"
 do
+    echo "Getting package $package..."
     DEBIAN_FRONTEND=noninteractive apt-get install $package -y > /dev/null
 done
-
-echo "Removing bridge with name $BRIDGENAME regardless of whether one exists..."
-ifconfig $BRIDGENAME down
-brctl delbr $BRIDGENAME
 
 echo "Creating and setting up bridge $BRIDGENAME..."
 brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
+ifconfig $BRIDGENAME 192.168.1.1
 
 echo "Working from $WORKINGDIR. Creating temporary folder to conduct tests in..."
 cd $WORKINGDIR
@@ -67,18 +65,18 @@ cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 echo "Downloading dependencies for seeders and leechers..."
 ./dependencies.sh -d
 
-echo -e "\n---\n---\nRunning Python script $MAINSCRIPT with parameters $BRIDGENAME $NUMLEECHERS $NUMSEEDERS...\n\n"
-python3 $MAINSCRIPT $BRIDGENAME $NUMLEECHERS $NUMSEEDERS
-echo -e "\n\nDone running Python script $MAINSCRIPT.\n---\n---\n"
+echo "Running container.sh..."
+./containers.sh $BRIDGENAME $NUMSEEDERS
+echo "Done running container.sh."
 
 echo "Copying results..."
-mv $LEECHFOLDER$DATAFILE $DATAFILE
+#mv $LEECHFOLDER$DATAFILE $DATAFILE
 
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
 echo "Creating plot..."
-python3 createPlot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
+#python3 createPlot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
 
 echo "Removing bridge with name $BRIDGENAME..."
 ifconfig $BRIDGENAME down

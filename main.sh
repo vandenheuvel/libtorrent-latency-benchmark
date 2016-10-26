@@ -36,7 +36,7 @@ apt-get update > /dev/null
 DEPENDENCIES=("bridge-utils" "ctorrent" "python3-numpy" "python3-matplotlib" "lxc")
 for package in "${DEPENDENCIES[@]}"
 do
-    apt-get install $package -y > /dev/null
+    DEBIAN_FRONTEND=noninteractive apt-get install $package -y > /dev/null
 done
 
 echo "Removing bridge with name $BRIDGENAME regardless of whether one exists..."

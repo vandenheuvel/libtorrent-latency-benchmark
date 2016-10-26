@@ -47,7 +47,7 @@ def loadConfig(containers, configDirectory, startIndex):
         print("Configuring ", container, " with config file ", configDirectory, " ...")
         if not container.load_config(configDirectory):
             print("The config file cannot be loaded.")
-        test = container.append_config_item("lxc.network.ipv4", "192.168.1." +str((startIndex + index))  "/24")
+        test = container.append_config_item("lxc.network.ipv4", "192.168.1." + str(startIndex + index) + "/24")
         print(test)
 
 # Start all the containers in the list containers.

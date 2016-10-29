@@ -5,7 +5,7 @@ TMPFOLDER="tmp/"
 SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
 
-BRIDGENAME="lxcbr0"
+BRIDGENAME="br0"
 MAINSCRIPT="main.py"
 DATAFILE="result.csv"
 
@@ -37,7 +37,7 @@ brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
 ifconfig $BRIDGENAME 192.168.1.1
 
-echo "Working from $TMPFOLDER. Creating temporary folder to conduct tests in..."
+echo "Working from $(pwd)/$TMPFOLDER. Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
 mkdir $LEECHFOLDER

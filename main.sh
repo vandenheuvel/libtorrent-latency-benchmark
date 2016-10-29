@@ -2,8 +2,8 @@
 # main.sh
 
 TMPFOLDER="tmp/"
-SEEDFOLDER=$TMPFOLDER"seeder/"
-LEECHFOLDER=$TMPFOLDER"leecher/"
+SEEDFOLDER="seeder/"
+LEECHFOLDER="leecher/"
 
 BRIDGENAME="br0"
 MAINSCRIPT="main.py"
@@ -37,16 +37,19 @@ brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
 ifconfig $BRIDGENAME 192.168.1.1
 
-echo "Working from $(pwd)/$TMPFOLDER. Creating temporary folder to conduct tests in..."
+echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
-mkdir $SEEDFOLDER
-mkdir $LEECHFOLDER
+mkdir $TMPFOLDER$SEEDFOLDER
+mkdir $TMPFOLDER$LEECHFOLDER
 
 echo "Copying leecher and seeder scripts to the correct folders..."
-cp seeder.py $SEEDFOLDER 
-cp leecher.py $LEECHFOLDER
-cp dependencies.sh $SEEDFOLDER
-cp dependencies.sh $LEECHFOLDER
+cp seeder.py $TMPFOLDER$SEEDFOLDER 
+cp leecher.py $TMPFOLDER$LEECHFOLDER
+cp dependencies.sh $TMPFOLDER$SEEDFOLDER
+cp dependencies.sh $TMPFOLDER$LEECHFOLDER
+
+echo "Working from $(pwd)/$TMPFOLDER..." 
+cd $TMPFOLDER
 
 echo "Creating random file of $FILESIZE MB and torrent for the seeders to seed... This might take a while."
 dd if=/dev/urandom of=$SEEDFOLDER$FILENAME bs=1M count=$FILESIZE status=progress
@@ -56,9 +59,12 @@ cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 echo "Downloading dependencies for seeders and leechers..."
 ./dependencies.sh -d
 
-echo "Running container.sh..."
+echo -e "\n\nRunning container.sh..."
 ./containers.sh $BRIDGENAME $NUMSEEDERS
-echo "Done running container.sh."
+echo -e "Done running container.sh.\n\n"
+
+echo "Leaving temporary folder..."
+cd ..
 
 echo "Copying results..."
 #mv $LEECHFOLDER$DATAFILE $DATAFILE

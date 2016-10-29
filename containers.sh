@@ -54,7 +54,7 @@ echo "Creating leecher..."
 lxc-create --quiet --template download -n $LEECHERNAME --config leecher.conf -- $CONFIGOPTIONS
 lxc-start -n $LEECHERNAME -F 
 lxc-attach -n $LEECHERNAME -- /mnt/dependencies.sh
-lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py
+lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 101
 
 lxc-stop --quiet -n $LEECHERNAME
 lxc-destroy --quiet -n $LEECHERNAME

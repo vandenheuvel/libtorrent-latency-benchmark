@@ -43,10 +43,14 @@ mkdir $TMPFOLDER$SEEDFOLDER
 mkdir $TMPFOLDER$LEECHFOLDER
 
 echo "Copying leecher and seeder scripts to the correct folders..."
-cp seeder.py $TMPFOLDER$SEEDFOLDER 
-cp leecher.py $TMPFOLDER$LEECHFOLDER
-cp dependencies.sh $TMPFOLDER$SEEDFOLDER
-cp dependencies.sh $TMPFOLDER$LEECHFOLDER
+to_copy=("seeder.py" "leecher.py" "dependencies.sh")
+for file in "${to_copy[@]}"
+do
+    cp $file $TMPFOLDER$SEEDFOLDER 
+    cp $file $TMPFOLDER$LEECHFOLDER
+done
+cp "containers.sh" $TMPFOLDER
+
 
 echo "Working from $(pwd)/$TMPFOLDER..." 
 cd $TMPFOLDER

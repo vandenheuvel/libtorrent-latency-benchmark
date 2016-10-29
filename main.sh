@@ -1,7 +1,6 @@
 #!/bin/bash
 # main.sh
 
-WORKINGDIR="/mnt"
 TMPFOLDER="tmp/"
 SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
@@ -38,8 +37,7 @@ brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
 ifconfig $BRIDGENAME 192.168.1.1
 
-echo "Working from $WORKINGDIR. Creating temporary folder to conduct tests in..."
-cd $WORKINGDIR
+echo "Working from $TMPFOLDER. Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
 mkdir $LEECHFOLDER

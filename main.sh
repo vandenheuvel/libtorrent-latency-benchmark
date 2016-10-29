@@ -24,13 +24,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "Setting DNS..."
-echo -e "nameserver 8.8.8.8\nnameserver 208.67.222.222\n" > /etc/resolv.conf
-
-echo "Setting PATH variable..."
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export PATH
-
 echo "Downloading dependencies..."
 apt-get update > /dev/null
 DEPENDENCIES=("bridge-utils" "ctorrent" "lxc" "cgroupfs-mount")

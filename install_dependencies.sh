@@ -5,10 +5,9 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-install_packages=("python3-libtorrent" "python3-numpy")
+STARTDIR=$(pwd)
 
-for package in "${install_packages[@]}"
-do
-    dpkg --install /var/cache/apt/archives/$package*.deb
-done
+cd /var/cache/apt/archives
+dpkg --install *.deb 
 
+cd $STARTDIR

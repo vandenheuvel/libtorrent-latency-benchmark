@@ -6,8 +6,8 @@
 import libtorrent as lt
 
 # Choose from which directory to seed, and where the torrent is stored
-downloadFolder = './'
-torrentFolder = './'
+downloadFolder = '/mnt/'
+torrentFolder = '/mnt/'
 torrentName = 'test.torrent'
 
 # Read the torrent file

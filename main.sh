@@ -25,7 +25,7 @@ fi
 
 echo "Downloading dependencies..."
 apt-get update > /dev/null
-DEPENDENCIES=("bridge-utils" "ctorrent" "lxc" "cgroupfs-mount")
+DEPENDENCIES=("bridge-utils" "ctorrent" "lxc" "cgroupfs-mount" "apt-rdepends")
 for package in "${DEPENDENCIES[@]}"
 do
     echo "Getting package $package..."
@@ -47,8 +47,8 @@ mkdir $LEECHFOLDER
 
 echo "Copying leecher and seeder scripts to the correct folders..."
 cp {seeder.conf,leecher.conf} $TMPFOLDER
-cp dependencies.sh $SEEDFOLDER
-cp dependencies.sh $LEECHFOLDER
+cp install_dependencies.sh $SEEDFOLDER
+cp install_dependencies.sh $LEECHFOLDER
 cp seeder.py $SEEDFOLDER
 cp leecher.py $LEECHFOLDER
 
@@ -57,20 +57,22 @@ dd if=/dev/urandom of=$SEEDFOLDER$FILENAME bs=1M count=$FILESIZE status=progress
 ctorrent -t -u 127.0.0.1 -s $SEEDFOLDER$TORRENTNAME $SEEDFOLDER$FILENAME
 cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 
-echo "Downloading dependencies for seeders and leechers..."
-./dependencies.sh -d
+echo "Downloading dependencies..."
+./download_dependencies.sh
 
 echo -e "\n\nRunning container.sh..."
 ./containers.sh $BRIDGENAME $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
-exit
+
+
 #mv $LEECHFOLDER$DATAFILE $DATAFILE
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
 echo "Creating plot..."
-#python3 createPlot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
+#python3 create_plot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
 
 echo "Removing bridge with name $BRIDGENAME..."
 ifconfig $BRIDGENAME down
 brctl delbr $BRIDGENAME
+

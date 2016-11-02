@@ -47,9 +47,10 @@ do
     echo -e "\nlxc.network.ipv4 = 192.168.1.$ip/24" >> $container.conf
     echo -e "\nlxc.mount.entry = $(pwd)/seeder mnt none bind 0 0" >> $container.conf
     lxc-create --quiet --template download -n $container --config $container.conf -- $CONFIGOPTIONS
-    exit
     lxc-start -n $container
-    lxc-attach -n $container -- /mnt/dependencies.sh
+    echo "Installing dependencies..."
+    lxc-attach -n $container -- /mnt/install_dependencies.sh
+    echo "Starting seeding..."
     lxc-attach -n $container -- /usr/bin/python3 /mnt/seeder.py &
     ((ip++))
 done
@@ -58,8 +59,11 @@ echo "Creating leecher..."
 echo -e "\nlxc.mount.entry = $(pwd)/leecher mnt none bind 0 0" >> $LEECHERCONFIG
 lxc-create --quiet --template download -n $LEECHERNAME --config $LEECHERCONFIG -- $CONFIGOPTIONS
 lxc-start -n $LEECHERNAME 
-lxc-attach -n $LEECHERNAME -- /mnt/dependencies.sh
+echo "Installing dependencies..."
+lxc-attach -n $container -- /mnt/install_dependencies.sh
+echo "Starting the test..."
 lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 101
+echo "Test is done."
 
 lxc-stop --quiet -n $LEECHERNAME
 lxc-destroy --quiet -n $LEECHERNAME
@@ -71,7 +75,4 @@ done
 
 echo "Leaving temporary folder..."
 cd ../
-
-
-
 

@@ -22,8 +22,8 @@ startIP = int(sys.argv[1])
 numIPs = int(sys.argv[2])
 
 # Creation of variables used within the function
-downloadFolder = './'
-torrentFolder = './'
+downloadFolder = '/mnt/'
+torrentFolder = '/mnt/'
 torrentName = 'test.torrent'
 fileName = "test.file"
 networkDevice = 'eth0'

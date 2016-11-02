@@ -10,7 +10,6 @@ The results are then saved to a .csv file
 import os
 import sys
 import time
-import numpy
 import libtorrent as lt
 
 # Give the starting IP and the number of IPs
@@ -77,5 +76,11 @@ for index, latency in enumerate(latencies):
     os.system('rm ' + downloadFolder + fileName)
 
 # Write the speeds array to a .csv file
-npSpeeds = numpy.array(speeds).transpose()
-numpy.savetxt("speeds.csv", npSpeeds, delimiter = ",")
+with open("results.csv", "w") as f:
+    for row in speeds:
+        for number in row[:-1]:
+            f.write(str(number))
+            f.write(",")
+        f.write(str(row[-1]))
+        f.write("\n")
+

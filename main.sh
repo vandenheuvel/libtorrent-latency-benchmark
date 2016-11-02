@@ -2,8 +2,8 @@
 # main.sh
 
 TMPFOLDER="tmp/"
-SEEDFOLDER="seeder/"
-LEECHFOLDER="leecher/"
+SEEDFOLDER=$TMPFOLDER"seeder/"
+LEECHFOLDER=$TMPFOLDER"leecher/"
 
 BRIDGENAME="br0"
 MAINSCRIPT="main.py"
@@ -32,27 +32,25 @@ do
     DEBIAN_FRONTEND=noninteractive apt-get install $package -y > /dev/null
 done
 
+echo "Setting some DNS servers..."
+echo "nameserver 8.8.8.8\nnameserver8.8.4.4\n" > /etc/resolv.conf
+
 echo "Creating and setting up bridge $BRIDGENAME..."
 brctl addbr $BRIDGENAME
 ifconfig $BRIDGENAME up
-ifconfig $BRIDGENAME 192.168.1.1
+ifconfig $BRIDGENAME 192.168.1.99
 
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
-mkdir $TMPFOLDER$SEEDFOLDER
-mkdir $TMPFOLDER$LEECHFOLDER
+mkdir $SEEDFOLDER
+mkdir $LEECHFOLDER
 
 echo "Copying leecher and seeder scripts to the correct folders..."
-to_copy=("seeder.py" "leecher.py" "containers.sh")
-for file in "${to_copy[@]}"
-do
-    cp $file $TMPFOLDER 
-done
-cp "dependencies.sh" $TMPFOLDER{$SEEDFOLDER,$LEECHFOLDER}
-
-
-echo "Working from $(pwd)/$TMPFOLDER..." 
-cd $TMPFOLDER
+cp {seeder.conf,leecher.conf} $TMPFOLDER
+cp dependencies.sh $SEEDFOLDER
+cp dependencies.sh $LEECHFOLDER
+cp seeder.py $SEEDFOLDER
+cp leecher.py $LEECHFOLDER
 
 echo "Creating random file of $FILESIZE MB and torrent for the seeders to seed... This might take a while."
 dd if=/dev/urandom of=$SEEDFOLDER$FILENAME bs=1M count=$FILESIZE status=progress
@@ -65,13 +63,8 @@ echo "Downloading dependencies for seeders and leechers..."
 echo -e "\n\nRunning container.sh..."
 ./containers.sh $BRIDGENAME $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
-
-echo "Leaving temporary folder..."
-cd ..
-
-echo "Copying results..."
+exit
 #mv $LEECHFOLDER$DATAFILE $DATAFILE
-
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 

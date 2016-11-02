@@ -20,6 +20,8 @@ CONFIGOPTIONS="-d ubuntu -r xenial -a amd64"
 LEECHERCONFIG="leecher.conf"
 SEEDERCONFIG="seeder.conf"
 
+echo "Working from temporary directory $(pwd)/tmp..."
+cd tmp
 
 seeder_container_names=()
 for((index=0;index < $NUMSEEDERS;index++))
@@ -43,16 +45,19 @@ do
     echo "Creating and setting up $container..."
     cp $SEEDERCONFIG $container.conf
     echo -e "\nlxc.network.ipv4 = 192.168.1.$ip/24" >> $container.conf
+    echo -e "\nlxc.mount.entry = $(pwd)/seeder mnt none bind 0 0" >> $container.conf
     lxc-create --quiet --template download -n $container --config $container.conf -- $CONFIGOPTIONS
-    lxc-start -n $container -F
+    exit
+    lxc-start -n $container
     lxc-attach -n $container -- /mnt/dependencies.sh
     lxc-attach -n $container -- /usr/bin/python3 /mnt/seeder.py &
     ((ip++))
 done
 
 echo "Creating leecher..."
+echo -e "\nlxc.mount.entry = $(pwd)/leecher mnt none bind 0 0" >> $LEECHERCONFIG
 lxc-create --quiet --template download -n $LEECHERNAME --config $LEECHERCONFIG -- $CONFIGOPTIONS
-lxc-start -n $LEECHERNAME -F 
+lxc-start -n $LEECHERNAME 
 lxc-attach -n $LEECHERNAME -- /mnt/dependencies.sh
 lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 101
 
@@ -63,6 +68,9 @@ do
     lxc-stop -n $container
     lxc-destroy --quiet -n $container
 done
+
+echo "Leaving temporary folder..."
+cd ../
 
 
 

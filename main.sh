@@ -64,13 +64,15 @@ echo -e "\n\nRunning container.sh..."
 ./containers.sh $BRIDGENAME $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
 
+echo "Copying data from temporary folder..."
+cp $LEECHFOLDER$DATAFILE $DATAFILE
 
-#mv $LEECHFOLDER$DATAFILE $DATAFILE
+exit
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
 echo "Creating plot..."
-#python3 create_plot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
+python3 create_plot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
 
 echo "Removing bridge with name $BRIDGENAME..."
 ifconfig $BRIDGENAME down

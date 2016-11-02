@@ -5,7 +5,7 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-download_packages=("python3-libtorrent" "python3-numpy")
+download_packages=("python3-libtorrent")
 
 # For each package in downloadPackages, using the option given as the argument
 for package in "${download_packages[@]}"

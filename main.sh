@@ -50,8 +50,6 @@ echo -e "Done running container.sh.\n\n"
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE
 
-exit
-
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 

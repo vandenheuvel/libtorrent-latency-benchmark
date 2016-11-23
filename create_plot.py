@@ -28,7 +28,7 @@ lines = plt.plot(np.linspace(0, testDuration, len(data)), data)
 for index, line in enumerate(lines):
     line.set_label(str(delays[index]) + "ms")
 
-plt.ylabel("Download speed [kb / s]")
+plt.ylabel("Download speed [kB / s]")
 plt.xlabel("Time [s]")
 
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))

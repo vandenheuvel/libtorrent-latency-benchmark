@@ -1,8 +1,8 @@
 #!/bin/bash
 # containers.sh
 
-STARTIP=100
-SUBNET=192.168.1.
+STARTIP=3
+SUBNET=10.0.3.
 DEPENDENCIES=python3-libtorrent
 
 if [[ $EUID -ne 0 ]]; then
@@ -48,6 +48,7 @@ do
     echo -e "\nlxc.network.ipv4 = $SUBNET$ip/24" >> $container.conf
     echo -e "\nlxc.mount.entry = $(pwd)/seeder mnt none bind 0 0" >> $container.conf
     lxc-create --template download -n $container --config $container.conf -- $CONFIGOPTIONS
+exit 0
     lxc-start -n $container
     echo "Installing dependencies..."
     lxc-attach -n $container -- apt-get update

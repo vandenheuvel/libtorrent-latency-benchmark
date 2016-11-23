@@ -24,12 +24,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "Creating bridge..."
-brctl addbr $BRIDGENAME
-ifconfig $BRIDGENAME up
-ifconfig $BRIDGENAME 192.168.1.1
-brctl addif $BRIDGENAME $DEVICE
-
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
@@ -50,6 +44,8 @@ cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 echo -e "\n\nRunning container.sh..."
 ./containers.sh $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
+
+exit 0
 
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE

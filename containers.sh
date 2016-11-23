@@ -10,22 +10,27 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-if [ "$#" -ne 1 ]; then
-    echo "Illegal number of arguments, give number of seeders."
+if [ "$#" -ne 5 ]; then
+    echo "Illegal number of arguments, give number of seeders, test durations, latencyintervals and repetitions."
     exit 1
 fi
 
-NUMSEEDERS=2
+NUMSEEDERS=$1
 LEECHERNAME="Leecher0"
 CONFIGOPTIONS="-d ubuntu -r xenial -a amd64"
 LEECHERCONFIG="leecher.conf"
 SEEDERCONFIG="seeder.conf"
 
+RUNDURATION=$2
+LATENCYINTERVALS=$3
+REPETITIONS=$4
+RESULTFILE=$5
+
 echo "Working from temporary directory $(pwd)/tmp..."
 cd tmp
 
 seeder_container_names=()
-for index in {1..2}
+for index in {1..6}
 do
     seeder_container_names+=("Seeder$index")
 done
@@ -70,7 +75,7 @@ lxc-attach -n $LEECHERNAME -- apt-get upgrade -y
 lxc-attach -n $LEECHERNAME -- apt install $DEPENDENCIES -y
 
 echo "Starting the test..."
-lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 3
+lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $STARTIP $NUMSEEDERS $RUNDURATION $LATENCYINTERVALS $REPETITIONS $RESULTFILE
 echo "Test is done."
 
 lxc-stop --quiet -n $LEECHERNAME

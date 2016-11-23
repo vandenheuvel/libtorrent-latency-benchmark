@@ -5,19 +5,17 @@ TMPFOLDER="tmp/"
 SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
 
-DEVICE="enp0s3"
-BRIDGENAME="br0"
-MAINSCRIPT="main.py"
-DATAFILE="result.csv"
-
 FILENAME="test.file"
 TORRENTNAME="test.torrent"
+RESULTFILE="result.csv"
+RESULTPLOT="result.png"
 
 NUMLEECHERS=1
 NUMSEEDERS=1
 FILESIZE=1024
 RUNDURATION=30
-LATENCYINTERVALS=20
+LATENCYINTERVALS=50
+REPETITIONS=11
 
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root."
@@ -43,16 +41,16 @@ ctorrent -t -u 127.0.0.1 -s $SEEDFOLDER$TORRENTNAME $SEEDFOLDER$FILENAME
 cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 
 echo -e "\n\nRunning container.sh..."
-./containers.sh $NUMSEEDERS
+./containers.sh $NUMSEEDERS $RUNDURATION $LATENCYINTERVALS $REPETITIONS $RESULTFILE
 echo -e "Done running container.sh.\n\n"
 
 
 echo "Copying data from temporary folder..."
-cp $LEECHFOLDER$DATAFILE $DATAFILE
+cp $LEECHFOLDER$RESULTFILE $RESULTFILE
 
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
 echo "Creating plot..."
-python3 create_plot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
+python3 create_plot.py $RESULTFILE $RUNDURATION $LATENCYINTERVALS $RESULTPLOT
 

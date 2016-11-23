@@ -13,9 +13,9 @@ import time
 import libtorrent as lt
 
 # Give the starting IP and the number of IPs
-numVars = 2
+numVars = 6
 if len(sys.argv) != numVars + 1:
-    print("This script requires two arguments, the starting IP and the number of IPs respectively.")
+    print("This script requires arguments, the starting IP, the number of IPs, testduration, latencyintervalsize, amount of repetitions and name of result file .")
 
 startIP = int(sys.argv[1])
 numIPs = int(sys.argv[2])
@@ -24,13 +24,14 @@ numIPs = int(sys.argv[2])
 downloadFolder = '/mnt/'
 torrentFolder = '/mnt/'
 resultFolder = '/mnt/'
+resultName = sys.argv[6]
 torrentName = 'test.torrent'
 fileName = "test.file"
 networkDevice = 'eth0'
 measureEvery = .1
-latencyInterval = 50
-numIntervals = 10
-totalTime = 30
+latencyInterval = int(sys.argv[4])
+numIntervals = int(sys.argv[5])
+totalTime = int(sys.argv[3])
 iterations = round(totalTime / measureEvery)
 
 # Creation of both the latencies to be used and the save array for the speeds
@@ -57,14 +58,6 @@ for index, latency in enumerate(latencies):
     # Editing settings for the tests.
     settings = ses.get_settings()
 
-    # Setting the settings - experimental #
-    settings['allow_multiple_connections_per_ip'] = True
-    settings['disable_hash_checks'] = True
-    settings['low_prio_disk'] = False
-    settings['strict_end_game_mode'] = False
-    settings['smooth_connects'] = False
-    settings['connections_limit'] = 500
-
     ses.set_settings(settings)
     # Add the peers to the torrent
     for ipAddress in range(startIP, (startIP + numIPs + 1)):
@@ -87,7 +80,7 @@ for index, latency in enumerate(latencies):
     os.system('rm ' + downloadFolder + fileName)
 
 # Write the speeds array to a .csv file
-with open(resultFolder + 'result.csv', 'w') as f:
+with open(resultFolder + resultName, 'w') as f:
     for row in speeds:
         for number in row[:-1]:
             f.write(str(number))

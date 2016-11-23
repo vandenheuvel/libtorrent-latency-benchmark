@@ -6,6 +6,7 @@ SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
 
 DEVICE="enp0s3"
+BRIDGENAME="br0"
 MAINSCRIPT="main.py"
 DATAFILE="result.csv"
 
@@ -22,6 +23,12 @@ if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root."
     exit 1
 fi
+
+echo "Creating bridge..."
+brctl addbr $BRIDGENAME
+ifconfig $BRIDGENAME up
+ifconfig $BRIDGENAME 192.168.1.1
+brctl addif $BRIDGENAME $DEVICE
 
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
@@ -43,8 +50,6 @@ cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 echo -e "\n\nRunning container.sh..."
 ./containers.sh $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
-
-exit
 
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE

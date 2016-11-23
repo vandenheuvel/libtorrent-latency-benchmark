@@ -5,7 +5,7 @@ TMPFOLDER="tmp/"
 SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
 
-BRIDGENAME="br0"
+DEVICE="enp0s3"
 MAINSCRIPT="main.py"
 DATAFILE="result.csv"
 
@@ -22,23 +22,6 @@ if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root."
     exit 1
 fi
-
-echo "Downloading dependencies..."
-apt-get update > /dev/null
-DEPENDENCIES=("bridge-utils" "ctorrent" "lxc" "cgroupfs-mount" "apt-rdepends")
-for package in "${DEPENDENCIES[@]}"
-do
-    echo "Getting package $package..."
-    DEBIAN_FRONTEND=noninteractive apt-get install $package -y > /dev/null
-done
-
-echo "Setting some DNS servers..."
-echo "nameserver 8.8.8.8\nnameserver8.8.4.4\n" > /etc/resolv.conf
-
-echo "Creating and setting up bridge $BRIDGENAME..."
-brctl addbr $BRIDGENAME
-ifconfig $BRIDGENAME up
-ifconfig $BRIDGENAME 192.168.1.99
 
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
@@ -57,24 +40,18 @@ dd if=/dev/urandom of=$SEEDFOLDER$FILENAME bs=1M count=$FILESIZE status=progress
 ctorrent -t -u 127.0.0.1 -s $SEEDFOLDER$TORRENTNAME $SEEDFOLDER$FILENAME
 cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME
 
-echo "Downloading dependencies..."
-./download_dependencies.sh
-
 echo -e "\n\nRunning container.sh..."
-./containers.sh $BRIDGENAME $NUMSEEDERS
+./containers.sh $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
+
+exit
 
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE
 
-exit
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER
 
 echo "Creating plot..."
 python3 create_plot.py $DATAFILE $RUNDURATION $LATENCYINTERVALS
-
-echo "Removing bridge with name $BRIDGENAME..."
-ifconfig $BRIDGENAME down
-brctl delbr $BRIDGENAME
 

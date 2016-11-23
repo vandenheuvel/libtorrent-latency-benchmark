@@ -29,7 +29,7 @@ fileName = "test.file"
 networkDevice = 'eth0'
 measureEvery = .1
 latencyInterval = 50
-numIntervals = 2
+numIntervals = 10
 totalTime = 30
 iterations = round(totalTime / measureEvery)
 
@@ -68,6 +68,7 @@ for index, latency in enumerate(latencies):
         time.sleep(measureEvery)
         if s.is_seeding:
             break
+    sys.stdout.write('\n')
 
     # Remove latency settings and the (partially) downloaded torrent.
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')

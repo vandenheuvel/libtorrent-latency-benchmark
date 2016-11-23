@@ -76,7 +76,7 @@ for index, latency in enumerate(latencies):
     os.system('rm ' + downloadFolder + fileName)
 
 # Write the speeds array to a .csv file
-with open("results.csv", "w") as f:
+with open("result.csv", "w") as f:
     for row in speeds:
         for number in row[:-1]:
             f.write(str(number))

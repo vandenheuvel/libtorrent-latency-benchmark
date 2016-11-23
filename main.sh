@@ -24,6 +24,9 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+echo "Removing possible previous folder..."
+rm -rf $TMPFOLDER
+
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
@@ -46,6 +49,8 @@ echo -e "Done running container.sh.\n\n"
 
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE
+
+exit
 
 echo "Removing temporary folder..."
 rm -rf $TMPFOLDER

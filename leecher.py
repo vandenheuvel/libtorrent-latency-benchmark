@@ -26,9 +26,9 @@ torrentFolder = '/mnt/'
 torrentName = 'test.torrent'
 fileName = "test.file"
 networkDevice = 'eth0'
-measureEvery = .01
+measureEvery = .1
 latencyInterval = 50
-numIntervals = 10
+numIntervals = 2
 totalTime = 30
 iterations = round(totalTime / measureEvery)
 
@@ -76,7 +76,7 @@ for index, latency in enumerate(latencies):
     os.system('rm ' + downloadFolder + fileName)
 
 # Write the speeds array to a .csv file
-with open("result.csv", "w") as f:
+with open("/mnt/result.csv", "w") as f:
     for row in speeds:
         for number in row[:-1]:
             f.write(str(number))

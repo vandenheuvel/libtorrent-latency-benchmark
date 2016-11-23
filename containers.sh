@@ -50,9 +50,9 @@ do
     echo "Installing dependencies on $container..."
     lxc-attach -n $container -- ping -c1 8.8.8.8
     sleep 5
-    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt-get update
-    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt install $DEPENDENCIES -y
+    lxc-attach -n $container -- apt-get update
+    lxc-attach -n $container -- apt-get upgrade -y
+    lxc-attach -n $container -- apt install $DEPENDENCIES -y
     echo "Starting seeding..."
     lxc-attach -n $container -- /usr/bin/python3 /mnt/seeder.py &
     ((ip++))
@@ -65,9 +65,9 @@ lxc-start -n $LEECHERNAME
 echo "Installing dependencies..."
 lxc-attach -n $LEECHERNAME -- ping -c1 8.8.8.8
 sleep 5
-lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt-get update
-lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt install $DEPENDENCIES -y
+lxc-attach -n $LEECHERNAME -- apt-get update
+lxc-attach -n $LEECHERNAME -- apt-get upgrade -y
+lxc-attach -n $LEECHERNAME -- apt install $DEPENDENCIES -y
 echo "Starting the test..."
 lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 101
 echo "Test is done."

@@ -23,12 +23,13 @@ numIPs = int(sys.argv[2])
 # Creation of variables used within the function
 downloadFolder = '/mnt/'
 torrentFolder = '/mnt/'
+resultFolder = '/mnt/'
 torrentName = 'test.torrent'
 fileName = "test.file"
 networkDevice = 'eth0'
-measureEvery = .01
+measureEvery = .1
 latencyInterval = 50
-numIntervals = 10
+numIntervals = 2
 totalTime = 30
 iterations = round(totalTime / measureEvery)
 
@@ -36,12 +37,9 @@ iterations = round(totalTime / measureEvery)
 latencies = [latencyInterval * x for x in range(numIntervals)]
 speeds = [[0 for x in range(iterations)] for y in latencies]
 
-# Remove prior settings and downloaded torrents
-os.system('rm ' + downloadFolder + fileName)
-os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
-
 for index, latency in enumerate(latencies):
     print('\nNow testing with latency', latency, '...')
+
     # Adding latency to the network device
     os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
 
@@ -83,12 +81,12 @@ for index, latency in enumerate(latencies):
         if s.is_seeding:
             break
 
-    # Remove latency settings and the downloaded torrent.
+    # Remove latency settings and the (partially) downloaded torrent.
     os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
     os.system('rm ' + downloadFolder + fileName)
 
 # Write the speeds array to a .csv file
-with open("results.csv", "w") as f:
+with open(resultFolder + 'result.csv', 'w') as f:
     for row in speeds:
         for number in row[:-1]:
             f.write(str(number))

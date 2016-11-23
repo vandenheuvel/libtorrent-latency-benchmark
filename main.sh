@@ -6,6 +6,7 @@ SEEDFOLDER=$TMPFOLDER"seeder/"
 LEECHFOLDER=$TMPFOLDER"leecher/"
 
 DEVICE="enp0s3"
+BRIDGENAME="br0"
 MAINSCRIPT="main.py"
 DATAFILE="result.csv"
 
@@ -23,6 +24,9 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+echo "Removing possible previous folder..."
+rm -rf $TMPFOLDER
+
 echo "Creating temporary folder to conduct tests in..."
 mkdir $TMPFOLDER
 mkdir $SEEDFOLDER
@@ -30,8 +34,6 @@ mkdir $LEECHFOLDER
 
 echo "Copying leecher and seeder scripts to the correct folders..."
 cp {seeder.conf,leecher.conf} $TMPFOLDER
-cp install_dependencies.sh $SEEDFOLDER
-cp install_dependencies.sh $LEECHFOLDER
 cp seeder.py $SEEDFOLDER
 cp leecher.py $LEECHFOLDER
 
@@ -44,7 +46,6 @@ echo -e "\n\nRunning container.sh..."
 ./containers.sh $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
 
-exit
 
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE

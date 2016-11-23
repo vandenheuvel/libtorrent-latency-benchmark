@@ -15,7 +15,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-NUMSEEDERS=$2
+NUMSEEDERS=2
 LEECHERNAME="Leecher0"
 CONFIGOPTIONS="-d ubuntu -r xenial -a amd64"
 LEECHERCONFIG="leecher.conf"
@@ -25,7 +25,7 @@ echo "Working from temporary directory $(pwd)/tmp..."
 cd tmp
 
 seeder_container_names=()
-for((index=0;index < $NUMSEEDERS;index++))
+for index in {0..5}
 do
     seeder_container_names+=("Seeder$index")
 done

@@ -30,7 +30,7 @@ echo "Working from temporary directory $(pwd)/tmp..."
 cd tmp
 
 seeder_container_names=()
-for index in `1 $NUMSEEDERS`
+for index in `seq 1 $NUMSEEDERS`
 do
     seeder_container_names+=("Seeder$index")
 done
@@ -74,7 +74,7 @@ lxc-attach -n $LEECHERNAME -- apt-get update
 lxc-attach -n $LEECHERNAME -- apt-get upgrade -y
 lxc-attach -n $LEECHERNAME -- apt install $DEPENDENCIES -y
 
-echo "Starting the test..."
+echo -e "\nStarting the test..."
 lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $STARTIP $NUMSEEDERS $RUNDURATION $LATENCYINTERVALS $REPETITIONS $RESULTFILE
 echo "Test is done."
 

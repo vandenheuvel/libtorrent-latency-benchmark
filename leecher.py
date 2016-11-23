@@ -56,8 +56,8 @@ for index, latency in enumerate(latencies):
     h = ses.add_torrent(params)
     
     # Get the settings for the tests.
-    settings = ses.get_settings()
-    # Changing the settings - experimental #
+    #settings = ses.get_settings()
+    ## Changing the settings - experimental #
     #settings['allow_multiple_connections_per_ip'] = True
     #settings['disable_hash_checks'] = True
     #settings['low_prio_disk'] = False
@@ -65,7 +65,7 @@ for index, latency in enumerate(latencies):
     #settings['smooth_connects'] = False
     #settings['connections_limit'] = 500
     # Set the settings
-    ses.set_settings(settings)
+    #ses.set_settings(settings)
 
     # Add the peers to the torrent
     for ipAddress in range(startIP, (startIP + numIPs + 1)):

@@ -30,7 +30,7 @@ echo "Working from temporary directory $(pwd)/tmp..."
 cd tmp
 
 seeder_container_names=()
-for index in {1..6}
+for index in `1 $NUMSEEDERS`
 do
     seeder_container_names+=("Seeder$index")
 done

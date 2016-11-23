@@ -1,26 +1,26 @@
 #!/bin/bash
 # main.sh
 
-TMPFOLDER="tmp/"
-SEEDFOLDER=$TMPFOLDER"seeder/"
-LEECHFOLDER=$TMPFOLDER"leecher/"
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root."
+    exit 1
+fi
+
+NUMLEECHERS=1
+NUMSEEDERS=1
+FILESIZE=4096
+RUNDURATION=120
+LATENCYINTERVALS=50
+REPETITIONS=11
 
 FILENAME="test.file"
 TORRENTNAME="test.torrent"
 RESULTFILE="result.csv"
 RESULTPLOT="result.png"
 
-NUMLEECHERS=1
-NUMSEEDERS=1
-FILESIZE=1024
-RUNDURATION=30
-LATENCYINTERVALS=50
-REPETITIONS=11
-
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root."
-    exit 1
-fi
+TMPFOLDER="tmp/"
+SEEDFOLDER=$TMPFOLDER"seeder/"
+LEECHFOLDER=$TMPFOLDER"leecher/"
 
 echo "Removing possible previous folder..."
 rm -rf $TMPFOLDER

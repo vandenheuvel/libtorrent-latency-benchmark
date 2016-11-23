@@ -45,8 +45,6 @@ echo -e "\n\nRunning container.sh..."
 ./containers.sh $NUMSEEDERS
 echo -e "Done running container.sh.\n\n"
 
-exit 0
-
 echo "Copying data from temporary folder..."
 cp $LEECHFOLDER$DATAFILE $DATAFILE
 

@@ -54,6 +54,18 @@ for index, latency in enumerate(latencies):
     params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
     h = ses.add_torrent(params)
     
+    # Editing settings for the tests.
+    settings = ses.get_settings()
+
+    # Setting the settings - experimental #
+    settings['allow_multiple_connections_per_ip'] = True
+    settings['disable_hash_checks'] = True
+    settings['low_prio_disk'] = False
+    settings['strict_end_game_mode'] = False
+    settings['smooth_connects'] = False
+    settings['connections_limit'] = 500
+
+    ses.set_settings(settings)
     # Add the peers to the torrent
     for ipAddress in range(startIP, (startIP + numIPs + 1)):
         h.connect_peer(('192.168.1.' + str(ipAddress), 6881), 0x01)

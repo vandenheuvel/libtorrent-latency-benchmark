@@ -25,7 +25,7 @@ echo "Working from temporary directory $(pwd)/tmp..."
 cd tmp
 
 seeder_container_names=()
-for index in {0..2}
+for index in {0..1}
 do
     seeder_container_names+=("Seeder$index")
 done
@@ -38,9 +38,7 @@ do
 done
 
 echo "Creating new containers..."
-
 ip=$STARTIP
-((ip++))
 for container in "${seeder_container_names[@]}"
 do
     echo "Creating and setting up $container..."
@@ -49,10 +47,12 @@ do
     echo -e "\nlxc.mount.entry = $(pwd)/seeder mnt none bind 0 0" >> $container.conf
     lxc-create --template download -n $container --config $container.conf -- $CONFIGOPTIONS
     lxc-start -n $container
-    echo "Installing dependencies..."
-    lxc-attach -n $container -- apt-get update
-    lxc-attach -n $container -- apt-get upgrade -y
-    lxc-attach -n $container -- apt install $DEPENDENCIES -y
+    echo "Installing dependencies on $container..."
+    lxc-attach -n $container -- ping -c1 8.8.8.8
+    sleep 5
+    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt-get update
+    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+    lxc-attach -n $container -- DEBIAN_FRONTEND=noninteractive apt install $DEPENDENCIES -y
     echo "Starting seeding..."
     lxc-attach -n $container -- /usr/bin/python3 /mnt/seeder.py &
     ((ip++))
@@ -63,9 +63,11 @@ echo -e "\nlxc.mount.entry = $(pwd)/leecher mnt none bind 0 0" >> $LEECHERCONFIG
 lxc-create --quiet --template download -n $LEECHERNAME --config $LEECHERCONFIG -- $CONFIGOPTIONS
 lxc-start -n $LEECHERNAME 
 echo "Installing dependencies..."
-lxc-attach -n $container -- apt-get update
-lxc-attach -n $container -- apt-get upgrade -y
-lxc-attach -n $container -- apt install $DEPENDENCIES -y
+lxc-attach -n $LEECHERNAME -- ping -c1 8.8.8.8
+sleep 5
+lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt-get update
+lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+lxc-attach -n $LEECHERNAME -- DEBIAN_FRONTEND=noninteractive apt install $DEPENDENCIES -y
 echo "Starting the test..."
 lxc-attach -n $LEECHERNAME -- /usr/bin/python3 /mnt/leecher.py $NUMSEEDERS 101
 echo "Test is done."

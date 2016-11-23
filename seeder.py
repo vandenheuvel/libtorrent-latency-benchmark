@@ -28,8 +28,5 @@ params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storag
 h = ses.add_torrent(params)
 
 # Seed indefinitely
-i = 0
 while True:
-    print(i)
     time.sleep(1)
-    i += 1

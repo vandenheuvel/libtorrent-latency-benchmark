@@ -3,6 +3,7 @@
 
 """This script seeds the specified torrent file."""
 
+import time
 import libtorrent as lt
 
 # Choose from which directory to seed, and where the torrent is stored
@@ -26,3 +27,9 @@ info = lt.torrent_info(e)
 params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
 h = ses.add_torrent(params)
 
+# Seed indefinitely
+i = 0
+while True:
+    print(i)
+    time.sleep(1)
+    i += 1

@@ -69,7 +69,7 @@ for index, latency in enumerate(latencies):
 
     # Add the peers to the torrent
     for ipAddress in range(startIP, (startIP + numIPs + 1)):
-        h.connect_peer(('192.168.1.' + str(ipAddress), 6881), 0x01)
+        h.connect_peer(('10.0.3.' + str(ipAddress), 6881), 0x01)
 
     # Save data for the amount of iterations into speed
     for i in range(iterations):

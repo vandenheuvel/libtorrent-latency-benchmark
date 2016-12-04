@@ -42,8 +42,10 @@ for index, latency in enumerate(latencies):
     print('\nNow testing with latency', latency, '...')
 
     # Adding latency to the network device
-    os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
-
+    if index == 0:
+        os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
+    else:
+        os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms ' + str(int(round(latency / 2))) + 'ms distribution normal')
     # Open the torrent and start downloading
     torrent = open(torrentFolder + torrentName, 'rb')
     ses = lt.session()
@@ -64,6 +66,8 @@ for index, latency in enumerate(latencies):
     #settings['strict_end_game_mode'] = False
     #settings['smooth_connects'] = False
     #settings['connections_limit'] = 500
+    #settings['recv_socket_buffer_size'] = os_default
+    #settings['send_socket_buffer_size'] = os_default 
     # Set the settings
     #ses.set_settings(settings)
 

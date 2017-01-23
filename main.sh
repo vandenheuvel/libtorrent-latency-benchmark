@@ -8,7 +8,7 @@ fi
 
 NUMLEECHERS=1
 NUMSEEDERS=1
-FILESIZE=4096
+FILESIZE=1024
 RUNDURATION=120
 LATENCYINTERVALS=50
 REPETITIONS=11
@@ -35,7 +35,7 @@ cp {seeder.conf,leecher.conf} $TMPFOLDER
 cp seeder.py $SEEDFOLDER
 cp leecher.py $LEECHFOLDER
 
-echo "Creating random file of $FILESIZE MB and torrent for the seeders to seed... This might take a while."
+echo "Creating random file of $FILESIZE MiB and torrent for the seeders to seed... This might take a while."
 dd if=/dev/urandom of=$SEEDFOLDER$FILENAME bs=1M count=$FILESIZE status=progress
 ctorrent -t -u 127.0.0.1 -s $SEEDFOLDER$TORRENTNAME $SEEDFOLDER$FILENAME
 cp $SEEDFOLDER$TORRENTNAME $LEECHFOLDER$TORRENTNAME

@@ -1,0 +1,12 @@
+# Add torrent to downloads.
+curl -X PUT IPADDRESS:8085/downloads --data "anon_hops=0&safe_seeding=0&uri=file:LOCATION"
+
+# Write download speed to file.
+watch -n 1 "curl -s -X GET IPADDRESS:8085/downloads | jq '.downloads[0].speed_down' >> file.output"
+
+# Get Infohash.
+curl -s -X GET 127.0.0.1:8085/downloads | jq '.downloads[0].infohash'
+
+# Delete torrent from downloads.
+curl -X DELETE 127.0.0.1:8085/downloads/INFOHASH --data "remove_data=1"
+

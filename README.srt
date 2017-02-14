@@ -1,0 +1,5 @@
+# Libtorrent performance benchmarking
+
+Uses netem to create latency between two containers. Start seeder at one container, download across the connecting bridge with added latency.
+
+Performance is severly efected by latency of 50 ms.

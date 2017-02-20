@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # leecher.py
  
 """
@@ -11,41 +10,28 @@ import os
 import sys
 import time
 import libtorrent as lt
+import requests
+#from twisted.internet import selectreactor
+#selectreactor.install()
+from twisted.internet import reactor, task
+import threading
 
-# Give the starting IP and the number of IPs
-numVars = 6
-if len(sys.argv) != numVars + 1:
-    print("This script requires arguments, the starting IP, the number of IPs, testduration, latencyintervalsize, amount of repetitions and name of result file .")
+def main():
+    iterations = 300
 
-startIP = int(sys.argv[1])
-numIPs = int(sys.argv[2])
+    # Creation of variables used within the function
+    downloadFolder = '/home/user/'
+    torrentFolder = '/home/user/'
+    resultFolder = '/home/user/'
+    torrentName = 'test.torrent'
+    fileName = "test.file"
+    networkDevice = 'eth0'
+    measureEvery = 1
+    totalTime = 300
 
-# Creation of variables used within the function
-downloadFolder = '/mnt/'
-torrentFolder = '/mnt/'
-resultFolder = '/mnt/'
-resultName = sys.argv[6]
-torrentName = 'test.torrent'
-fileName = "test.file"
-networkDevice = 'eth0'
-measureEvery = .1
-latencyInterval = int(sys.argv[4])
-numIntervals = int(sys.argv[5])
-totalTime = int(sys.argv[3])
-iterations = round(totalTime / measureEvery)
+    # Creation of both the latencies to be used and the save array for the speeds
+    speeds = []
 
-# Creation of both the latencies to be used and the save array for the speeds
-latencies = [latencyInterval * x for x in range(numIntervals)]
-speeds = [[0 for x in range(iterations)] for y in latencies]
-
-for index, latency in enumerate(latencies):
-    print('\nNow testing with latency', latency, '...')
-
-    # Adding latency to the network device
-    if index == 0:
-        os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms')
-    else:
-        os.system('sudo tc qdisc add dev ' + networkDevice + ' root netem delay ' + str(latency) + 'ms ' + str(int(round(latency / 2))) + 'ms distribution normal')
     # Open the torrent and start downloading
     torrent = open(torrentFolder + torrentName, 'rb')
     ses = lt.session()
@@ -56,7 +42,9 @@ for index, latency in enumerate(latencies):
 
     params = { 'save_path': downloadFolder, 'storage_mode': lt.storage_mode_t.storage_mode_sparse, 'ti': info }
     h = ses.add_torrent(params)
-    
+
+    #print(requests.get("http://10.0.3.248:8000/").status_code)
+
     # Get the settings for the tests.
     #settings = ses.get_settings()
     ## Changing the settings - experimental #
@@ -71,32 +59,23 @@ for index, latency in enumerate(latencies):
     # Set the settings
     #ses.set_settings(settings)
 
-    # Add the peers to the torrent
-    for ipAddress in range(startIP, (startIP + numIPs + 1)):
-        h.connect_peer(('10.0.3.' + str(ipAddress), 6881), 0x01)
+    # Add the peer to the torrent
+    h.connect_peer(('10.0.3.248', 6881), 0x01)
 
     # Save data for the amount of iterations into speed
-    for i in range(iterations):
-        sys.stdout.write('\r%.1f%%' % (100 * i / iterations))
+    def printSpeed(h, speeds):
         s = h.status()
+        speeds.append(s.download_rate / 1000)
+        print(speeds[-1], s.state)
 
-        state_str = ['queued', 'checking', 'downloading metadata', 'downloading', 'finished', 'seeding', 'allocating']
-        speeds[index][i] = s.download_rate / 1000
-        time.sleep(measureEvery)
-        if s.is_seeding:
-            break
-    sys.stdout.write('\n')
+    #threading.Thread(target=printSpeed, args=(h, speeds)).start()
+    l = task.LoopingCall(printSpeed, h, speeds)
+    l.start(1)
 
-    # Remove latency settings and the (partially) downloaded torrent.
-    os.system('sudo tc qdisc del dev ' + networkDevice + ' root netem')
-    os.system('rm ' + downloadFolder + fileName)
+reactor.callWhenRunning(main)
+reactor.run()
 
 # Write the speeds array to a .csv file
-with open(resultFolder + resultName, 'w') as f:
-    for row in speeds:
-        for number in row[:-1]:
-            f.write(str(number))
-            f.write(",")
-        f.write(str(row[-1]))
-        f.write("\n")
-
+with open('poll.csv', 'w') as f:
+    for speed in speeds:
+        f.write(str(speed) + ',')

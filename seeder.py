@@ -31,6 +31,7 @@ def main():
     h = ses.add_torrent(params)
 
     def printSpeed(h):
+        ses.pop_alerts()
         s = h.status()
         print(s.download_rate)
         print(s.state)

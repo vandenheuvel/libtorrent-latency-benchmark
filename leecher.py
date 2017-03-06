@@ -64,6 +64,7 @@ def main():
 
     # Save data for the amount of iterations into speed
     def printSpeed(h, speeds):
+        ses.pop_alerts()
         s = h.status()
         speeds.append(s.download_rate / 1000)
         print(speeds[-1], s.state)
